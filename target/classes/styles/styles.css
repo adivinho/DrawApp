@@ -1,0 +1,7 @@
+#toolsArea{
+	-fx-background-color: #777799;
+	-fx-padding: 5;	
+}
+#drawingArea{
+	-fx-background-color: #00ff00;
+}
