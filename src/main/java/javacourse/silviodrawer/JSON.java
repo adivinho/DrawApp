@@ -115,6 +115,58 @@ class JSON {
                     LineSegment l = new LineSegment(p1, p2, Color.web(c), Root, AllShapes);
                     l.setCorners();
                     l.createControlAnchorsFor(Root);
+                } else if (obj.get("type").equals("oval")) {
+                    Point center = new Point();
+                    center.setLocation(Double.parseDouble((String) obj.get("x")),Double.parseDouble((String) obj.get("y")));
+                    Double rad1 = Double.parseDouble((String) obj.get("rad1"));
+                    Double rad2 = Double.parseDouble((String) obj.get("rad2"));
+                    String fc = (String) obj.get("fcolor");
+                    Oval o = new Oval(center, rad1, rad2, Color.web(fc), Color.web(fc), Root, AllShapes);
+                    o.setCorners();
+                    o.createControlAnchorsFor(Root);
+                } else if (obj.get("type").equals("circle")) {
+                    Point center = new Point();
+                    center.setLocation(Double.parseDouble((String) obj.get("x")),Double.parseDouble((String) obj.get("y")));
+                    Double rad = Double.parseDouble((String) obj.get("rad"));
+                    String fc = (String) obj.get("fcolor");
+                    Circle c = new Circle(center, rad, rad, Color.web(fc), Color.web(fc), Root, AllShapes);                   
+                    c.setCorners();
+                    c.createControlAnchorsFor(Root);
+                } else if (obj.get("type").equals("rectangle")) {
+                    Point cor = new Point();
+                    cor.setLocation(Double.parseDouble((String) obj.get("x")),Double.parseDouble((String) obj.get("y")));
+                    Double w = Double.parseDouble((String) obj.get("w"));
+                    Double h = Double.parseDouble((String) obj.get("h"));
+                    String c = (String) obj.get("fcolor");
+                    String fc = (String) obj.get("fcolor");
+                    RectangleShape r = new RectangleShape(cor, w, h, Color.web(fc), Color.web(c), Root, AllShapes);
+                    r.setCorners();
+                    r.createControlAnchorsFor(Root);
+                } 
+                else if (obj.get("type").equals("square")) {
+                    Point cor = new Point();
+                    cor.setLocation(Double.parseDouble((String) obj.get("x")),Double.parseDouble((String) obj.get("y")));
+                    Double w = Double.parseDouble((String) obj.get("l"));
+                    String c = (String) obj.get("fcolor");
+                    String fc = (String) obj.get("fcolor");
+                    Square s = new Square(cor, w, w, Color.web(fc), Color.web(c), Root, AllShapes);
+                    s.setCorners();
+                    s.createControlAnchorsFor(Root);
+                } else if (obj.get("type").equals("triangle")) {
+                    Point p1 = new Point();
+                    Point p2 = new Point();
+                    Point p3 = new Point();
+                    p1.setLocation(Double.parseDouble((String) obj.get("x1")),
+                            Double.parseDouble((String) obj.get("y1")));
+                    p2.setLocation(Double.parseDouble((String) obj.get("x2")),
+                            Double.parseDouble((String) obj.get("y2")));
+                    p3.setLocation(Double.parseDouble((String) obj.get("x3")),
+                            Double.parseDouble((String) obj.get("y3")));
+                    String fc = (String) obj.get("fcolor");
+                    TriangleShape t = new TriangleShape(p1, p2, p3, Color.web(fc), Color.web(fc), Root, AllShapes);
+                    t.setCorners();
+                    t.createControlAnchorsFor(Root);
+
                 }
             }
         } catch (Exception e) {

@@ -9,9 +9,8 @@ import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -58,16 +57,59 @@ public class MainApp extends Application {
 
         // --- Menu File
         Menu menuFile = new Menu("File");
-        MenuItem New = new MenuItem("New ... ");
+        MenuItem New = new MenuItem("New");
         
         New.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent arg0) {
                 System.out.println("Menu New has choosen");
-        //        CheckBeforeOpen();
+                CheckBeforeOpen();
+            }
+
+            private void CheckBeforeOpen() {
+                final Stage dialog = new Stage();
+                dialog.setTitle("To save or not to save");
+                dialog.setMinWidth(200);
+                final Label x = new Label("Do you want to save your current picture?");
+                
+                final Button Yes = new Button("Yes");
+                Yes.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent arg0) {
+                    save();
+                    dialog.close();
+                    for (Shapes s:AllShapes){
+                        s.notSelected(root);
+                    }                        
+                    root.getChildren().remove(1,AllShapes.size()+1);
+                    AllShapes.clear();
+                    counter = 0;
+                }
+                });
+        
+                final Button No = new Button("No");
+                No.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent arg0) {
+                        dialog.close();                   
+                        for (Shapes s:AllShapes){
+                            s.notSelected(root);
+                        }                        
+                        root.getChildren().remove(1,AllShapes.size()+1);
+                        AllShapes.clear();
+                        counter = 0;
+                    }
+                });
+                
+                VBox sP = new VBox(8);
+                sP.setAlignment(Pos.CENTER);
+                sP.getChildren().addAll(x, Yes, No);
+                Scene s = new Scene(sP, 400, 100);
+                dialog.setScene(s);
+                dialog.show();
             }
         });
-        
+                
         MenuItem Open = new MenuItem("Open ...");
         
         Open.setOnAction(new EventHandler<ActionEvent>() {
@@ -93,21 +135,8 @@ public class MainApp extends Application {
                 System.out.println("Menu Save has choosen");
                 save();
             }
-   
-        public void save() {        
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialFileName("Simple.json");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
 
-            // Show save file dialog
-            File file = fileChooser.showSaveDialog(window);
-            try {
-                MControl.fileSave(AllShapes, file);
-            } catch (IOException e) {
-                System.out.println("Exception for during writing a file "+e);
-            }
-        }
-    });
+        });
                 
         MenuItem Exit = new MenuItem("Exit");
         
@@ -267,23 +296,10 @@ public class MainApp extends Application {
                 for (Shapes current : AllShapes) {
                     if (current.isSelected()) {
                         selectedShapes.add(current);
-
-    //                    if (fillColor && current instanceof ClosedShape) {
-    //                        selectedcolors.add(((ClosedShape) current).getColor());
-    //                        ((ClosedShape) current).setStyle(c);
-    //                    } else {
-    //                        selectedcolors.add((Color) current.getBoarderColor());
                             current.addColor(c);
-    //                    }
                     }
                 }
-                if(!selectedShapes.isEmpty()){
-                    if (!fillColor) {
-                        Action action = new ColorAction(selectedShapes, selectedcolors, c);
-                    } else {
-                        Action action = new fillColorAction(selectedShapes, selectedcolors, c);
-                    }
-                }
+                
                 System.out.println("New color has been choosen "+c);
             }
         });
@@ -304,7 +320,7 @@ public class MainApp extends Application {
             }
         });
 
-        toolsArea.getChildren().add(select);
+    //    toolsArea.getChildren().add(select);
         
         layout.setLeft(toolsArea);
         
@@ -312,10 +328,10 @@ public class MainApp extends Application {
 
         final Canvas drawingArea = new Canvas(scene.getWidth(), scene.getHeight());
           
-            drawingArea.setOnMouseClicked(click);
-            scene.setOnKeyPressed(pressKey);
-            drawingArea.setOnMouseDragged(drag);
-            drawingArea.setOnMouseReleased(leave);
+        drawingArea.setOnMouseClicked(click);
+        scene.setOnKeyPressed(pressKey);
+        drawingArea.setOnMouseDragged(drag);
+        drawingArea.setOnMouseReleased(leave);
 
         final GraphicsContext gc = drawingArea.getGraphicsContext2D();
         gc.setLineWidth(5);
@@ -387,7 +403,6 @@ public class MainApp extends Application {
         public void handle(MouseEvent event) {
             System.out.println("Mouse button has released -> calling createControlAnchorsFor()");
             if (current != null) {
-                Action action = new DrawAction(current);
                 current.createControlAnchorsFor(root);
                 current = null;
             }
@@ -413,6 +428,20 @@ public class MainApp extends Application {
         }
     
 };
+        
+public void save() {        
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setInitialFileName("Simple.json");
+    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+
+    // Show save file dialog
+    File file = fileChooser.showSaveDialog(window);
+    try {
+        MControl.fileSave(AllShapes, file);
+    } catch (IOException e) {
+        System.out.println("Exception for during writing a file "+e);
+    }
+}
         
     /**
      * The main() method is ignored in correctly deployed JavaFX application.

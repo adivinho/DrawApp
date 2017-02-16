@@ -17,7 +17,6 @@ import javafx.scene.shape.StrokeType;
  * @author silvo
  */
 
-import javacourse.silviodrawer.Action;
 import javacourse.silviodrawer.Shapes;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
