@@ -19,18 +19,19 @@ class MControl {
     @SuppressWarnings("rawtypes")
     public Group fileOpen(File file, Group root, LinkedList<Shapes> AllShapes, 
             Class c, Class s) throws Exception {
-        String extension = "";
+        // Checked extension
         int i = file.getAbsolutePath().lastIndexOf('.');
         if (i > 0) {
-            extension = file.getAbsolutePath().substring(i + 1);
+            String extension = file.getAbsolutePath().substring(i + 1);
+            System.out.println(file);
         }
         JSON jsonFile = new JSON();
         try {
-//            return jsonFile.loadJSON(file, root, AllShapes, c, s);
-                return root;
+                return jsonFile.loadJSON(file, root, AllShapes, c, s);
             } 
         catch (Exception e) {
-                   throw e;
+                System.out.println("Tried to open file "+file);
+                throw e;
             }
     }
     

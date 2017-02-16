@@ -1,6 +1,8 @@
 package javacourse.silviodrawer;
 
+import java.awt.Point;
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -16,6 +18,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -24,25 +29,27 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
     Group root = new Group();
-    private LinkedList<Shapes> AllShapes = new LinkedList<>();
+    public LinkedList<Shapes> AllShapes = new LinkedList<>();  //The collection of active figures
     Class<?> c =  null, s = null;
     MControl MControl = new MControl();
-    String state = "";
-    int counter = 0;
+    static String state = "blank";                              // what type of figures is selected
+    static int counter = 0;
+    Shapes current;                                             // Selected figure now
+    private boolean fillColor = false;                          // status of fill button
+    private ColorPicker colorPicker = new ColorPicker(Color.BLACK);
+    LinkedList<Point> clickpoint = new LinkedList<Point>();     //collection dots for drawing
+    public int layoutMaxX = 900;
+    public int layoutMaxY = 650;
+    Stage window;
     
     @Override
     public void start(Stage arg0) throws Exception {
-    //    Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
-        
-    //    Scene scene = new Scene(root, 800, 600);
-     //   scene.getStylesheets().add("/styles/Styles.css");
-        
         final Stage window;
         window = arg0;
         
         window.setTitle("JavaFX");
         BorderPane layout = new BorderPane();
-        Scene scene = new Scene(layout, 900, 650);
+        Scene scene = new Scene(layout, layoutMaxX, layoutMaxY);
         layout.setStyle("-fx-background-color: ffffe0");
         window.setScene(scene);
         
@@ -56,7 +63,7 @@ public class MainApp extends Application {
         New.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent arg0) {
-                System.out.println("Button New is pressed");
+                System.out.println("Menu New has choosen");
         //        CheckBeforeOpen();
             }
         });
@@ -66,10 +73,9 @@ public class MainApp extends Application {
         Open.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent arg0) {
-                System.out.println("Button Open is pressed");
+                System.out.println("Menu Open has choosen");
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("TXT Files", "*.txt"),
-                        new FileChooser.ExtensionFilter("JSON Files", "*.json"));
+                fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
                 File file = fileChooser.showOpenDialog(window);
                 try {
                     root = MControl.fileOpen(file, root, AllShapes, c, s);
@@ -84,17 +90,31 @@ public class MainApp extends Application {
         Save.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent arg0) {
-                System.out.println("Button Save is pressed");
-//                save();
+                System.out.println("Menu Save has choosen");
+                save();
             }
-        });
+   
+        public void save() {        
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialFileName("Simple.json");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+
+            // Show save file dialog
+            File file = fileChooser.showSaveDialog(window);
+            try {
+                MControl.fileSave(AllShapes, file);
+            } catch (IOException e) {
+                System.out.println("Exception for during writing a file "+e);
+            }
+        }
+    });
                 
         MenuItem Exit = new MenuItem("Exit");
         
         Exit.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent arg0) {
-                System.out.println("Button Exit is pressed");
+                System.out.println("Menu Exit has choosen");
                 System.exit(0);
             }
         });
@@ -105,22 +125,15 @@ public class MainApp extends Application {
         layout.setTop(menuBar);
         
         
-// Adding tools bar on the left of  layout (BordePaint)       
+// Adding tools bar on the left node of layout (BordePaint)       
         
-        VBox toolsArea = new VBox(10);
+        VBox toolsArea = new VBox(10); //space between elements
         toolsArea.setPrefWidth(60);
         toolsArea.setId("toolsArea");
         
-// Adding drowing aria   
-
-        final Canvas drawingArea = new Canvas(scene.getWidth(), scene.getHeight());
-          
-//        drawingArea.setOnMouseClicked(click);
-//        scene.setOnKeyPressed(pressKey);
-//        drawingArea.setOnMouseDragged(drag);
-//        drawingArea.setOnMouseReleased(leave);
+        // Set-up buttons: line, square, triangle, circle, ellipse, rectangle, fill
         
-        File file = new File("resources/seg.jpg");
+        File file = new File("resources/fun_line.jpg");
         System.out.println("Added image: "+file.toURI().toString());
         Image image = new Image(file.toURI().toString());
         final ImageView line = new ImageView(image);
@@ -128,32 +141,279 @@ public class MainApp extends Application {
         line.setOnMouseClicked(new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
-                if (state != "line") {
-                    state = "line";
-                }
+                state = "line";
                 counter = 0;
+                for (Shapes crnt : AllShapes) {
+                    crnt.notSelected(root);
+                }
+                System.out.println("The button line is pressed.");
             }
         });
         
         toolsArea.getChildren().add(line);
+        
+        file = new File("resources/fun_square.jpg");
+        System.out.println("Added image: "+file.toURI().toString());
+        image = new Image(file.toURI().toString());
+        final ImageView square = new ImageView(image);
+        square.setVisible(true);
+        square.setOnMouseClicked(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                state = "square";
+                counter = 0;
+                for (Shapes crnt : AllShapes) {
+                    crnt.notSelected(root);
+                }
+                System.out.println("The button square is pressed.");
+            }
+        });
+        
+        toolsArea.getChildren().add(square);
+        
+        file = new File("resources/fun_rec.jpg");
+        image = new Image(file.toURI().toString());
+        final ImageView rectangle = new ImageView(image);
+        rectangle.setVisible(true);
+        rectangle.setOnMouseClicked(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                state = "rectangle";
+                counter = 0;
+                for (Shapes crnt : AllShapes) {
+                    crnt.notSelected(root);
+                }
+            }
+        });
+        
+        toolsArea.getChildren().add(rectangle);
 
+        file = new File("resources/fun_tri.jpg");
+        image = new Image(file.toURI().toString());
+        ImageView triangle = new ImageView(image);
+        triangle.setOnMouseClicked(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                state = "triangle";
+                counter = 0;
+                for (Shapes crnt : AllShapes) {
+                    crnt.notSelected(root);
+                }
+                System.out.println("The button triangle is pressed.");
+            }
+        });
+        
+        toolsArea.getChildren().add(triangle);
+        
+        file = new File("resources/fun_circle.jpg");
+        image = new Image(file.toURI().toString());
+        final ImageView circle = new ImageView(image);
+        circle.setVisible(true);
+        circle.setOnMouseClicked(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                state = "circle";           
+                for (Shapes crnt : AllShapes) {
+                    crnt.notSelected(root);
+                }
+                counter = 0;
+                System.out.println("The button circle is pressed.");
+            }
+        });
+        
+        toolsArea.getChildren().add(circle);
+        
+        file = new File("resources/fun_ellipse.jpg");
+        image = new Image(file.toURI().toString());
+        final ImageView ellipse = new ImageView(image);
+        ellipse.setOnMouseClicked(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                state = "ellipse";
+                counter = 0;
+                for (Shapes crnt : AllShapes) {
+                    crnt.notSelected(root);
+                }
+                System.out.println("The button ellipse is pressed.");
+            }
+        });
+        
+        toolsArea.getChildren().add(ellipse);
+        
+        file = new File("resources/fill.jpg");
+        image = new Image(file.toURI().toString());
+        final ImageView fill = new ImageView(image);
+        fill.setOnMouseClicked(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                fillColor = !fillColor;
+                for (Shapes crnt : AllShapes) {
+                    crnt.notSelected(root);
+                }
+                System.out.println("The button fill is pressed.");
+            }
+        });
+        
+        toolsArea.getChildren().add(fill);
+        
+        // --- Element for setting a color
+        colorPicker.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Color c = colorPicker.getValue();
+                LinkedList<Shapes> selectedShapes = new LinkedList<Shapes>();
+                LinkedList<Color> selectedcolors = new LinkedList<Color>();
+
+                for (Shapes current : AllShapes) {
+                    if (current.isSelected()) {
+                        selectedShapes.add(current);
+
+    //                    if (fillColor && current instanceof ClosedShape) {
+    //                        selectedcolors.add(((ClosedShape) current).getColor());
+    //                        ((ClosedShape) current).setStyle(c);
+    //                    } else {
+    //                        selectedcolors.add((Color) current.getBoarderColor());
+                            current.addColor(c);
+    //                    }
+                    }
+                }
+                if(!selectedShapes.isEmpty()){
+                    if (!fillColor) {
+                        Action action = new ColorAction(selectedShapes, selectedcolors, c);
+                    } else {
+                        Action action = new fillColorAction(selectedShapes, selectedcolors, c);
+                    }
+                }
+                System.out.println("New color has been choosen "+c);
+            }
+        });
+
+        toolsArea.getChildren().add(colorPicker);
+        
+        file = new File("resources/select.jpg");
+        image = new Image(file.toURI().toString());
+        final ImageView select = new ImageView(image);
+        select.setOnMouseClicked(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                state = "";
+                for (Shapes crnt : AllShapes) {
+                    crnt.notSelected(root);
+                }
+            System.out.println("The button select is pressed.");
+            }
+        });
+
+        toolsArea.getChildren().add(select);
+        
         layout.setLeft(toolsArea);
         
-// --- Drawing Area
+// Adding drawing area   
+
+        final Canvas drawingArea = new Canvas(scene.getWidth(), scene.getHeight());
+          
+            drawingArea.setOnMouseClicked(click);
+            scene.setOnKeyPressed(pressKey);
+            drawingArea.setOnMouseDragged(drag);
+            drawingArea.setOnMouseReleased(leave);
 
         final GraphicsContext gc = drawingArea.getGraphicsContext2D();
-        gc.setStroke(Color.BISQUE);
         gc.setLineWidth(5);
         drawingArea.setId("drawingArea");
         root.getChildren().add(drawingArea);
-        layout.setCenter(root);
-              
-        scene.getStylesheets().add("/styles/styles.css");
         
+        layout.setCenter(root);          
+        scene.getStylesheets().add("/styles/styles.css");
         window.setScene(scene);
         window.show();
-    }
-
+    };
+    
+    // Event for mouse -> clicked button
+    EventHandler<MouseEvent> click = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+            System.out.println("Mouse has clicked ("+event.getX()+"x"+event.getY()+") with the shape: "+state+" going to call notSelected()");
+            
+            for (Shapes crnt : AllShapes) {
+                    crnt.notSelected(root);
+            }
+        }
+    };
+    
+    // Event for mouse -> move with pressed button
+    EventHandler<MouseEvent> drag = (new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+            Point now = new Point();
+            now.setLocation(event.getSceneX(), event.getSceneY());
+            if (current == null) {
+                switch (state) {
+                    case "line":
+                        LineSegment line = new LineSegment(now, now, colorPicker.getValue(), root, AllShapes);
+                        current = line;
+                        break;
+                    case "square":
+                        Square square = new Square(now, 0.0, 0.0, colorPicker.getValue(), colorPicker.getValue(), root, AllShapes);
+                        current = square;
+                        break;
+                    case "rectangle":
+                        RectangleShape rectangle = new RectangleShape(now, 0.0, 0.0, colorPicker.getValue(), colorPicker.getValue(), root, AllShapes);
+                        current = rectangle;
+                        break;
+                    case "triangle": 
+                        TriangleShape triangle = new TriangleShape(now, now, now, colorPicker.getValue(), colorPicker.getValue(), root, AllShapes);
+                        current = triangle;
+                        break;
+                    case "circle":
+                        Circle circle = new Circle(now, 0.0, 0.0, colorPicker.getValue(), colorPicker.getValue(), root, AllShapes);
+                        current = circle;
+                        break;
+                    case "ellipse":
+                        Oval oval = new Oval(now, 0.0, 0.0, colorPicker.getValue(), colorPicker.getValue(), root, AllShapes);
+                        current = oval;
+                        break;
+                    default: 
+                        System.out.println("Draging mouse pointer without any selection");
+                }
+            } else {
+                current.dragIt(now);
+            }
+        }
+    });
+    
+    // Event for mouse release button - add anchors to a shape
+    EventHandler<MouseEvent> leave = (new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+            System.out.println("Mouse button has released -> calling createControlAnchorsFor()");
+            if (current != null) {
+                Action action = new DrawAction(current);
+                current.createControlAnchorsFor(root);
+                current = null;
+            }
+            
+        }
+    });
+    
+    EventHandler<KeyEvent> pressKey = new EventHandler<KeyEvent>() {
+        @Override
+        public void handle(final KeyEvent keyEvent) {
+            System.out.println("Key is pressed "+keyEvent.getCode());
+            if (keyEvent.getCode() == KeyCode.DELETE) {
+                LinkedList<Shapes> selectedShapes = new LinkedList<Shapes>();
+                for (Shapes current : AllShapes) {
+                    if (current.isSelected()) {
+                        selectedShapes.add(current);
+                    }
+                }
+                for (Shapes sel : selectedShapes) {
+                    sel.delete(root, AllShapes);
+                }
+            }
+        }
+    
+};
+        
     /**
      * The main() method is ignored in correctly deployed JavaFX application.
      * main() serves only as fallback in case the application can not be
@@ -162,7 +422,7 @@ public class MainApp extends Application {
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+public static void main(String[] args) {
         launch(args);
     }
 

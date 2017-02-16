@@ -5,10 +5,18 @@
  */
 package javacourse.silviodrawer;
 
+import java.util.LinkedList;
+import javafx.scene.Group;
+
 /**
  *
  * @author silvo
  */
-class Action {
- //   
+
+public abstract class Action {
+
+	// draw, move, resize, color, delete
+//	public abstract void undo(Group root, LinkedList<Shapes> AllShapes);
+//	public abstract void redo(Group root, LinkedList<Shapes> AllShapes);
+
 }
