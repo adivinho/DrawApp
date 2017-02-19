@@ -28,18 +28,19 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
     Group root = new Group();
-    public LinkedList<Shapes> AllShapes = new LinkedList<>();  //The collection of active figures
+    public LinkedList<Shapes> AllShapes = new LinkedList<>();       //The collection of active figures
     Class<?> c =  null, s = null;
     MControl MControl = new MControl();
-    static String state = "blank";                              // what type of figures is selected
+    static String state = "blank";                                  // what type of figures is selected
     static int counter = 0;
-    Shapes current;                                             // Selected figure now
-    private boolean fillColor = false;                          // status of fill button
+    Shapes current;                                                 // Selected figure now
+    private boolean fillColor = false;                              // status of fill button
     private ColorPicker colorPicker = new ColorPicker(Color.BLACK);
-    LinkedList<Point> clickpoint = new LinkedList<Point>();     //collection dots for drawing
-    public int layoutMaxX = 900;
+    LinkedList<Point> clickpoint = new LinkedList<Point>();         //collection dots for drawing
+    public int layoutMaxX = 900;                                    //Size of a layout
     public int layoutMaxY = 650;
     Stage window;
+    
     
     @Override
     public void start(Stage arg0) throws Exception {
@@ -156,121 +157,32 @@ public class MainApp extends Application {
         
 // Adding tools bar on the left node of layout (BordePaint)       
         
-        VBox toolsArea = new VBox(10); //space between elements
-        toolsArea.setPrefWidth(60);
+        VBox toolsArea = new VBox(8); //space between elements
+        toolsArea.setPrefWidth(78);
         toolsArea.setId("toolsArea");
         
         // Set-up buttons: line, square, triangle, circle, ellipse, rectangle, fill
         
-        File file = new File("resources/fun_line.jpg");
-        System.out.println("Added image: "+file.toURI().toString());
+        MButton buttonLine = new MButton("line", "resources/fun_line.jpg", state, toolsArea, root, AllShapes);
+        toolsArea.getChildren().add(buttonLine);
+        
+        MButton buttonSquare = new MButton("square", "resources/fun_square.jpg", state, toolsArea, root, AllShapes);
+        toolsArea.getChildren().add(buttonSquare);
+        
+        MButton buttonRectangle = new MButton("rectangle", "resources/fun_rec.jpg", state, toolsArea, root, AllShapes);
+        toolsArea.getChildren().add(buttonRectangle);
+        
+        MButton buttonTriangle = new MButton("triangle", "resources/fun_tri.jpg", state, toolsArea, root, AllShapes);
+        toolsArea.getChildren().add(buttonTriangle);
+        
+        MButton buttonCircle = new MButton("circle", "resources/fun_circle.jpg", state, toolsArea, root, AllShapes); 
+        toolsArea.getChildren().add(buttonCircle);
+        
+        MButton buttonEllipse = new MButton("ellipse", "resources/fun_ellipse.jpg", state, toolsArea, root, AllShapes);        
+        toolsArea.getChildren().add(buttonEllipse);
+        
+        File file = new File("resources/fill.jpg");
         Image image = new Image(file.toURI().toString());
-        final ImageView line = new ImageView(image);
-        line.setVisible(true);
-        line.setOnMouseClicked(new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                state = "line";
-                counter = 0;
-                for (Shapes crnt : AllShapes) {
-                    crnt.notSelected(root);
-                }
-                System.out.println("The button line is pressed.");
-            }
-        });
-        
-        toolsArea.getChildren().add(line);
-        
-        file = new File("resources/fun_square.jpg");
-        System.out.println("Added image: "+file.toURI().toString());
-        image = new Image(file.toURI().toString());
-        final ImageView square = new ImageView(image);
-        square.setVisible(true);
-        square.setOnMouseClicked(new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                state = "square";
-                counter = 0;
-                for (Shapes crnt : AllShapes) {
-                    crnt.notSelected(root);
-                }
-                System.out.println("The button square is pressed.");
-            }
-        });
-        
-        toolsArea.getChildren().add(square);
-        
-        file = new File("resources/fun_rec.jpg");
-        image = new Image(file.toURI().toString());
-        final ImageView rectangle = new ImageView(image);
-        rectangle.setVisible(true);
-        rectangle.setOnMouseClicked(new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                state = "rectangle";
-                counter = 0;
-                for (Shapes crnt : AllShapes) {
-                    crnt.notSelected(root);
-                }
-            }
-        });
-        
-        toolsArea.getChildren().add(rectangle);
-
-        file = new File("resources/fun_tri.jpg");
-        image = new Image(file.toURI().toString());
-        ImageView triangle = new ImageView(image);
-        triangle.setOnMouseClicked(new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                state = "triangle";
-                counter = 0;
-                for (Shapes crnt : AllShapes) {
-                    crnt.notSelected(root);
-                }
-                System.out.println("The button triangle is pressed.");
-            }
-        });
-        
-        toolsArea.getChildren().add(triangle);
-        
-        file = new File("resources/fun_circle.jpg");
-        image = new Image(file.toURI().toString());
-        final ImageView circle = new ImageView(image);
-        circle.setVisible(true);
-        circle.setOnMouseClicked(new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                state = "circle";           
-                for (Shapes crnt : AllShapes) {
-                    crnt.notSelected(root);
-                }
-                counter = 0;
-                System.out.println("The button circle is pressed.");
-            }
-        });
-        
-        toolsArea.getChildren().add(circle);
-        
-        file = new File("resources/fun_ellipse.jpg");
-        image = new Image(file.toURI().toString());
-        final ImageView ellipse = new ImageView(image);
-        ellipse.setOnMouseClicked(new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                state = "ellipse";
-                counter = 0;
-                for (Shapes crnt : AllShapes) {
-                    crnt.notSelected(root);
-                }
-                System.out.println("The button ellipse is pressed.");
-            }
-        });
-        
-        toolsArea.getChildren().add(ellipse);
-        
-        file = new File("resources/fill.jpg");
-        image = new Image(file.toURI().toString());
         final ImageView fill = new ImageView(image);
         fill.setOnMouseClicked(new EventHandler<Event>() {
             @Override
@@ -284,6 +196,9 @@ public class MainApp extends Application {
         });
         
         toolsArea.getChildren().add(fill);
+        
+//        for (toolsArea.getChildren().get(2);
+//                buttonEllipse.Release();
         
         // --- Element for setting a color
         colorPicker.setOnAction(new EventHandler<ActionEvent>() {
@@ -305,22 +220,6 @@ public class MainApp extends Application {
         });
 
         toolsArea.getChildren().add(colorPicker);
-        
-        file = new File("resources/select.jpg");
-        image = new Image(file.toURI().toString());
-        final ImageView select = new ImageView(image);
-        select.setOnMouseClicked(new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                state = "";
-                for (Shapes crnt : AllShapes) {
-                    crnt.notSelected(root);
-                }
-            System.out.println("The button select is pressed.");
-            }
-        });
-
-    //    toolsArea.getChildren().add(select);
         
         layout.setLeft(toolsArea);
         
