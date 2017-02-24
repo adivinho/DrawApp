@@ -39,7 +39,6 @@ public class TriangleShape extends Shapes{
 	setEverything(color, border, root, AllShapes);
 
 	setCorners();
-//        tri.Selected(root, AllShapes);
     }
     
     public Polygon getTriangle() {
@@ -98,10 +97,10 @@ public class TriangleShape extends Shapes{
     public void dragIt(Point x) {
         end = x;
         double startY = getTriangle().getPoints().get(1);
-        getTriangle().getPoints().set(2, Math.max(5, (double) x.x));
-        getTriangle().getPoints().set(3, Math.max(5,(double) (2*startY-x.y)));
-        getTriangle().getPoints().set(4, Math.max(5, (double) x.x));
-        getTriangle().getPoints().set(5, Math.max(5, (double) x.y));
+        getTriangle().getPoints().set(2, Math.min(MainApp.layoutMaxX - 5, Math.max(5, (double) x.x)));
+        getTriangle().getPoints().set(3, Math.min(MainApp.layoutMaxY - 5, Math.max(5,(double) (2*startY-x.y))));
+        getTriangle().getPoints().set(4, Math.min(MainApp.layoutMaxX - 5, Math.max(5, (double) x.x)));
+        getTriangle().getPoints().set(5, Math.min(MainApp.layoutMaxY - 5, Math.max(5, (double) x.y)));
         setCorners();
     }
 }

@@ -28,7 +28,7 @@ class MButton extends Button{
     private Image image;
     private final String STYLE_NORMAL = "-fx-background-color: lightgray; -fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 ); -fx-border-radius: 4;";
     private final String STYLE_PRESSED = "-fx-background-color: darkgray; -fx-border-color: rgb(49, 89, 23); -fx-border-radius: 4;";
-    
+
     MButton(final String newstate, String filename, final String state, final VBox toolsArea, final Group root, final LinkedList<Shapes> AllShapes){
         final DropShadow shadow = new DropShadow();
         this.setStyle(STYLE_NORMAL);
@@ -77,9 +77,6 @@ class MButton extends Button{
             setEffect(null);
         }
         });
-    }
-
-    private MButton() {
     }
     
     public void Release(){

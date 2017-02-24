@@ -27,18 +27,22 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
-    Group root = new Group();
+    public Group root = new Group();
+
+    public void setRoot(Group root) {
+        this.root = root;
+    }
+    
     public LinkedList<Shapes> AllShapes = new LinkedList<>();       //The collection of active figures
     Class<?> c =  null, s = null;
-    MControl MControl = new MControl();
     static String state = "blank";                                  // what type of figures is selected
     static int counter = 0;
     Shapes current;                                                 // Selected figure now
     private boolean fillColor = false;                              // status of fill button
     private ColorPicker colorPicker = new ColorPicker(Color.BLACK);
     LinkedList<Point> clickpoint = new LinkedList<Point>();         //collection dots for drawing
-    public int layoutMaxX = 900;                                    //Size of a layout
-    public int layoutMaxY = 650;
+    static int layoutMaxX = 900;                                    //Size of a layout
+    static int layoutMaxY = 650;
     Stage window;
     
     
@@ -57,104 +61,18 @@ public class MainApp extends Application {
         MenuBar menuBar = new MenuBar();
 
         // --- Menu File
-        Menu menuFile = new Menu("File");
-        MenuItem New = new MenuItem("New");
-        
-        New.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent arg0) {
-                System.out.println("Menu New has choosen");
-                CheckBeforeOpen();
-            }
-
-            private void CheckBeforeOpen() {
-                final Stage dialog = new Stage();
-                dialog.setTitle("To save or not to save");
-                dialog.setMinWidth(200);
-                final Label x = new Label("Do you want to save your current picture?");
+        Menu menuFile = new Menu("File"); 
                 
-                final Button Yes = new Button("Yes");
-                Yes.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent arg0) {
-                    save();
-                    dialog.close();
-                    for (Shapes s:AllShapes){
-                        s.notSelected(root);
-                    }                        
-                    root.getChildren().remove(1,AllShapes.size()+1);
-                    AllShapes.clear();
-                    counter = 0;
-                }
-                });
+        MMenuItem menuItemNew = new MMenuItem("New", window, root, AllShapes);           
+        MMenuItem menuItemOpen = new MMenuItem("Open", window, root, AllShapes);                
+        MMenuItem menuItemSave = new MMenuItem("Save", window, root, AllShapes);        
+        MMenuItem menuItemExit = new MMenuItem("Exit", window, root, AllShapes);
         
-                final Button No = new Button("No");
-                No.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent arg0) {
-                        dialog.close();                   
-                        for (Shapes s:AllShapes){
-                            s.notSelected(root);
-                        }                        
-                        root.getChildren().remove(1,AllShapes.size()+1);
-                        AllShapes.clear();
-                        counter = 0;
-                    }
-                });
-                
-                VBox sP = new VBox(8);
-                sP.setAlignment(Pos.CENTER);
-                sP.getChildren().addAll(x, Yes, No);
-                Scene s = new Scene(sP, 400, 100);
-                dialog.setScene(s);
-                dialog.show();
-            }
-        });
-                
-        MenuItem Open = new MenuItem("Open ...");
-        
-        Open.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent arg0) {
-                System.out.println("Menu Open has choosen");
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
-                File file = fileChooser.showOpenDialog(window);
-                try {
-                    root = MControl.fileOpen(file, root, AllShapes, c, s);
-                } catch (Exception e) {
-                    
-                }
-            }
-        });        
-        
-        MenuItem Save = new MenuItem("Save");
-        
-        Save.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent arg0) {
-                System.out.println("Menu Save has choosen");
-                save();
-            }
-
-        });
-                
-        MenuItem Exit = new MenuItem("Exit");
-        
-        Exit.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent arg0) {
-                System.out.println("Menu Exit has choosen");
-                System.exit(0);
-            }
-        });
-        
-        menuFile.getItems().addAll(New, Open, Save, new SeparatorMenuItem(), Exit);
+        menuFile.getItems().addAll(menuItemNew, menuItemOpen, menuItemSave, new SeparatorMenuItem(), menuItemExit);
         
         menuBar.getMenus().addAll(menuFile);
         layout.setTop(menuBar);
-        
-        
+                
 // Adding tools bar on the left node of layout (BordePaint)       
         
         VBox toolsArea = new VBox(8); //space between elements
@@ -197,8 +115,6 @@ public class MainApp extends Application {
         
         toolsArea.getChildren().add(fill);
         
-//        for (toolsArea.getChildren().get(2);
-//                buttonEllipse.Release();
         
         // --- Element for setting a color
         colorPicker.setOnAction(new EventHandler<ActionEvent>() {
@@ -326,21 +242,7 @@ public class MainApp extends Application {
             }
         }
     
-};
-        
-public void save() {        
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setInitialFileName("Simple.json");
-    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-
-    // Show save file dialog
-    File file = fileChooser.showSaveDialog(window);
-    try {
-        MControl.fileSave(AllShapes, file);
-    } catch (IOException e) {
-        System.out.println("Exception for during writing a file "+e);
-    }
-}
+};        
         
     /**
      * The main() method is ignored in correctly deployed JavaFX application.

@@ -18,7 +18,7 @@ import javafx.scene.shape.Shape;
  *
  * @author silvo
  */
-public abstract class Shapes {
+public abstract class Shapes{
     
     private Shape shape;
     private boolean selected = true;
@@ -224,6 +224,5 @@ public abstract class Shapes {
     public abstract void setCorners();
     public abstract void MoveParameters();
     public abstract void updateAnchors(Group root);
-
         
 }

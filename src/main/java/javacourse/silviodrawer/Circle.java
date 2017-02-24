@@ -26,11 +26,11 @@ public class Circle extends Oval{
 
 	end = x;
              
-	ellipse.setRadiusX(Math.abs(0.5 * (end.getX() - start.getX())));
-	ellipse.setRadiusY(Math.abs(0.5 * (end.getX() - start.getX())));
+	ellipse.setRadiusX(Math.abs(end.getX() - start.getX())/2);
+	ellipse.setRadiusY(Math.abs(end.getX() - start.getX())/2);
 
-	ellipse.setCenterX(start.getX() + 0.5 * (end.getX() - start.getX()));
-	ellipse.setCenterY(start.getY() + 0.5 * (end.getY() - start.getY()));
+	ellipse.setCenterX(start.getX() + (end.getX() - start.getX())/2);
+	ellipse.setCenterY(start.getY() + (end.getY() - start.getY())/2);
 
 	setCorners();
     }
