@@ -148,7 +148,7 @@ class MMenuItem extends MenuItem{
                 sP.getChildren().addAll(x, Yes, No);
                 Scene s = new Scene(sP, 400, 100);
                 dialog.setScene(s);
-                dialog.show();
+                dialog.showAndWait();
     }
     
     public void dropCurrentShapes(Group root, LinkedList<Shapes> AllShapes){
