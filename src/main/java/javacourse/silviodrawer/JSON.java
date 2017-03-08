@@ -97,8 +97,7 @@ class JSON {
     }
 
     @SuppressWarnings("rawtypes")
-    public Group loadJSON(File file, Group Root, LinkedList<Shapes> AllShapes, Class cfile,
-            Class sfile) throws Exception {
+    public Group loadJSON(File file, Group Root, LinkedList<Shapes> AllShapes) throws Exception {
         JSONObject obj;
         String crntLine = "";
         try {

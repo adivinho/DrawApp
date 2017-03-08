@@ -24,6 +24,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
@@ -34,29 +35,23 @@ public class MainApp extends Application {
     }
     
     public LinkedList<Shapes> AllShapes = new LinkedList<>();       //The collection of active figures
-    Class<?> c =  null, s = null;
     static String state = "blank";                                  // what type of figures is selected
     static int counter = 0;
     Shapes current;                                                 // Selected figure now
     private boolean fillColor = false;                              // status of fill button
     private ColorPicker colorPicker = new ColorPicker(Color.BLACK);
-    LinkedList<Point> clickpoint = new LinkedList<Point>();         //collection dots for drawing
     static int layoutMaxX = 900;                                    //Size of a layout
     static int layoutMaxY = 650;
-    Stage window;
-    
-    
+
     @Override
     public void start(Stage arg0) throws Exception {
         final Stage window;
         window = arg0;
-        
         window.setTitle("JavaFX");
         BorderPane layout = new BorderPane();
         Scene scene = new Scene(layout, layoutMaxX, layoutMaxY);
         layout.setStyle("-fx-background-color: ffffe0");
-        window.setScene(scene);
-        
+        window.setScene(scene);      
         // --- Add Menu bar
         MenuBar menuBar = new MenuBar();
 
@@ -98,23 +93,9 @@ public class MainApp extends Application {
         
         MButton buttonEllipse = new MButton("ellipse", "resources/fun_ellipse.jpg", state, toolsArea, root, AllShapes);        
         toolsArea.getChildren().add(buttonEllipse);
-        
-        File file = new File("resources/fill.jpg");
-        Image image = new Image(file.toURI().toString());
-        final ImageView fill = new ImageView(image);
-        fill.setOnMouseClicked(new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                fillColor = !fillColor;
-                for (Shapes crnt : AllShapes) {
-                    crnt.notSelected(root);
-                }
-                System.out.println("The button fill is pressed.");
-            }
-        });
-        
-        toolsArea.getChildren().add(fill);
-        
+
+        MButton buttonFill = new MButton("fillColor", "resources/fill.jpg", state, toolsArea, root, AllShapes);
+        toolsArea.getChildren().add(buttonFill);
         
         // --- Element for setting a color
         colorPicker.setOnAction(new EventHandler<ActionEvent>() {
@@ -122,10 +103,8 @@ public class MainApp extends Application {
             public void handle(ActionEvent event) {
                 Color c = colorPicker.getValue();
                 LinkedList<Shapes> selectedShapes = new LinkedList<Shapes>();
-                LinkedList<Color> selectedcolors = new LinkedList<Color>();
-
                 for (Shapes current : AllShapes) {
-                    if (current.isSelected()) {
+                    if (current.isSelected() && (state == "fillColor")) {
                         selectedShapes.add(current);
                             current.addColor(c);
                     }

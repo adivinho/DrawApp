@@ -110,7 +110,7 @@ class MMenuItem extends MenuItem{
         }
         JSON jsonFile = new JSON();
         try {
-                return jsonFile.loadJSON(file, root, AllShapes, c, s);
+                return jsonFile.loadJSON(file, root, AllShapes);
             } 
         catch (Exception e) {
                 System.out.println("Tried to open file "+file);

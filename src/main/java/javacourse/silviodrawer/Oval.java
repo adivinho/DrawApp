@@ -17,15 +17,14 @@ import javafx.scene.shape.Ellipse;
  * @author silvo
  */
 public class Oval extends Shapes { 
-    	protected Ellipse ellipse = new Ellipse();
+    protected Ellipse ellipse = new Ellipse();
 	protected Point start, end;
 	// start corner and end corner
 	protected Point Center;
 	protected Double rad1, rad2;
 	protected Anchor top, bottom, left, right;
 	
-        
-        public Oval(Point center, Double radius1, Double radius2, Color color, Color border, Group Root, LinkedList<Shapes> AllShapes) {
+	public Oval(Point center, Double radius1, Double radius2, Color color, Color border, Group Root, LinkedList<Shapes> AllShapes) {
 		Center = center;
 		rad1 = radius1;
 		rad2 = radius2;
@@ -34,14 +33,12 @@ public class Oval extends Shapes {
 		ellipse.setRadiusX(radius1);
 		ellipse.setRadiusY(radius2);
 		start = end = center;
-                this.setType("oval");
-                
+		this.setType("oval");
 		setShape(ellipse);
-                
-                setEverything(color, border,  Root, AllShapes);
-        }
+        setEverything(color, border,  Root, AllShapes);
+	}
         
-    	public  Double getCenterX() {
+	public  Double getCenterX() {
 		return ellipse.getCenterX();
 	}
 	public  Double getCenterY() {
@@ -54,20 +51,20 @@ public class Oval extends Shapes {
 		return ellipse.getRadiusY();
 	}
         
-        @Override
+    @Override
 	public void createControlAnchorsFor(Group root) {
-            setShapeAnchors(new Anchor[4]);
+		setShapeAnchors(new Anchor[4]);
 
-            getShapeAnchors()[0] = top = new Anchor(getPoints()[0], getPoints()[1], this, root);
-            getShapeAnchors()[1] = right = new Anchor(getPoints()[2], getPoints()[3], this, root);
+        getShapeAnchors()[0] = top = new Anchor(getPoints()[0], getPoints()[1], this, root);
+        getShapeAnchors()[1] = right = new Anchor(getPoints()[2], getPoints()[3], this, root);
 
-            getShapeAnchors()[2] = bottom = new Anchor(getPoints()[4], getPoints()[5], this, root);
-            getShapeAnchors()[3] = left = new Anchor(getPoints()[6], getPoints()[7], this, root);
+        getShapeAnchors()[2] = bottom = new Anchor(getPoints()[4], getPoints()[5], this, root);
+        getShapeAnchors()[3] = left = new Anchor(getPoints()[6], getPoints()[7], this, root);
 
-            root.getChildren().addAll(top.circle, bottom.circle, right.circle, left.circle);
+        root.getChildren().addAll(top.circle, bottom.circle, right.circle, left.circle);
 	}
         
-        @Override
+    @Override
 	public void updateAnchors(Group root) {
             setCorners();
             top.move(getPoints()[0], getPoints()[1]);
@@ -78,21 +75,18 @@ public class Oval extends Shapes {
         
         @Override
 	public void moveWithAnchors(Anchor anchor, double endX, double endY, Group root) {
-            double startX = anchor.circle.getCenterX();
-            double startY = anchor.circle.getCenterY();
+        double startX = anchor.circle.getCenterX();
+        double startY = anchor.circle.getCenterY();
             /// upper left
-            if (anchor.equals(top)) {
+        if (anchor.equals(top)) {
         	ellipse.setRadiusY(Math.max(ellipse.getRadiusY() + 0.5 * (startY - endY), 0.0));
 
-            } else if (anchor.equals(bottom)) {
-		ellipse.setRadiusY(Math.max(ellipse.getRadiusY() - 0.5 * (startY - endY), 0.0));
-
+        } else if (anchor.equals(bottom)) {
+            ellipse.setRadiusY(Math.max(ellipse.getRadiusY() - 0.5 * (startY - endY), 0.0));
             } else if (anchor.equals(left)) {
 		ellipse.setRadiusX(Math.max(ellipse.getRadiusX() + 0.5 * (startX - endX), 0.0));
-
             } else if (anchor.equals(right)) {
 		ellipse.setRadiusX(Math.max(ellipse.getRadiusX() - 0.5 * (startX - endX), 0.0));
-
             }
 		setCorners();
 		updateAnchors(root);
@@ -131,7 +125,7 @@ public class Oval extends Shapes {
         
         @Override
 	public void MoveParameters() {
-            	ellipse.setCenterX(getPoints()[4]);
+        ellipse.setCenterX(getPoints()[4]);
 		ellipse.setCenterY(getPoints()[3]);
 	}
 }

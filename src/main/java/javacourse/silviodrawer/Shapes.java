@@ -50,10 +50,11 @@ public abstract class Shapes{
     public Color getBoarderColor() {
 	return boarderColor;
     }
+
     void addColor(Color c) {
-	getShape().setStroke(c);
+        getShape().setStroke(c);
         getShape().setFill(c);
-	setBoarderColor(c);
+        setBoarderColor(c);
     }
     
     private void MouseClick(final Group root, final LinkedList<Shapes> AllShapes) {
@@ -83,10 +84,9 @@ public abstract class Shapes{
     }
     
     private void MouseDrag(final Group root) {
-	getShape().setOnMouseDragged(new EventHandler<MouseEvent>() {
+	    getShape().setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-        //        System.out.println("Shapes() MouseDrag "+this.getClass());
 		now.setLocation(mouseEvent.getX(), mouseEvent.getY());
 		dragDelta.setLocation(now.x - then.x , now.y - then.y);
 
@@ -146,16 +146,16 @@ public abstract class Shapes{
     }
     
     public void setEverything(Color color, Color border, Group Root, LinkedList<Shapes> AllShapes) {
-	shape.setStrokeWidth(3); //TODO change by a menu parameter
-	AllShapes.add(this);
+	    shape.setStrokeWidth(3); //TODO change by a menu parameter
+	    AllShapes.add(this);
         addColor(color);
-	Root.getChildren().add(this.getShape());
+	    Root.getChildren().add(this.getShape());
         SetActions(Root, AllShapes);
-	for (int i = 0; i < AllShapes.size()-1; i++) { //it can be set to (size - 1) in order to left the last shape active
-		Shapes crnt = AllShapes.get(i);
-		crnt.notSelected(Root);
-                System.out.println("Shapes.setEverything() AllShapes["+i+"]: "+crnt.shape);
-	}
+	    for (int i = 0; i < AllShapes.size()-1; i++) { //it can be set to (size - 1) in order to left the last shape active
+		    Shapes crnt = AllShapes.get(i);
+		    crnt.notSelected(Root);
+            System.out.println("Shapes.setEverything() AllShapes["+i+"]: "+crnt.shape);
+	    }
     }
     
     public void SetActions(Group root, LinkedList<Shapes> AllShapes) {
@@ -208,15 +208,15 @@ public abstract class Shapes{
     }
     
     public void delete(Group Root, LinkedList<Shapes> AllShapes) {
-	Root.getChildren().remove(getShape());
-	for (int i = 0; i < AllShapes.size() ; i++) {
-		if (AllShapes.get(i).equals(this)) {
-			AllShapes.remove(i);
-		}
-	}
-	for (Anchor anchor : getShapeAnchors()) {
+	    Root.getChildren().remove(getShape());
+	    for (int i = 0; i < AllShapes.size() ; i++) {
+		    if (AllShapes.get(i).equals(this)) {
+			    AllShapes.remove(i);
+		    }
+	    }
+	    for (Anchor anchor : getShapeAnchors()) {
             Root.getChildren().remove(anchor.circle);
-	}
+	    }
     }
     
     public abstract void createControlAnchorsFor(Group root);
